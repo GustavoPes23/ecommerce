@@ -6,7 +6,7 @@ import com.example.ecommerce.user.controllers.dtos.FindUserByIdResponse;
 import com.example.ecommerce.user.domains.User;
 import com.example.ecommerce.user.usecases.CreateUser;
 import com.example.ecommerce.user.usecases.FindUserById;
-import com.github.f4b6a3.ulid.Ulid;
+import com.example.ecommerce.user.usecases.InactiveUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,7 @@ public class UserController {
 
     private final CreateUser createUser;
     private final FindUserById findUserById;
+    private final InactiveUser inactiveUser;
 
     @PostMapping
     public ResponseEntity<CreateUserResponse> create(final @RequestBody CreateUserRequest request) {
@@ -32,5 +33,11 @@ public class UserController {
     public ResponseEntity<FindUserByIdResponse> findById(final @PathVariable("id") UUID id) {
         final User user = findUserById.execute(id);
         return ResponseEntity.ok(FindUserByIdResponse.fromDomain(user));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> inactive(final @PathVariable("id") UUID id) {
+        inactiveUser.execute(id);
+        return ResponseEntity.ok().build();
     }
 }
