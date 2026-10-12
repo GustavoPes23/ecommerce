@@ -1,6 +1,7 @@
 package com.example.ecommerce.user.gateways;
 
 import com.example.ecommerce.user.domains.User;
+import com.example.ecommerce.user.domains.enums.UserStatus;
 import com.example.ecommerce.user.entities.UserEntity;
 import com.example.ecommerce.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,12 @@ public class UserGatewayImpl implements UserGateway {
     @Transactional(readOnly = true)
     public Optional<User> findById(final UUID id) {
         return userRepository.findById(id)
+                .map(UserEntity::toDomain);
+    }
+
+    @Override
+    public Optional<User> findByIdAndStatus(final UUID id, final UserStatus status) {
+        return userRepository.findByIdAndStatus(id, status.name())
                 .map(UserEntity::toDomain);
     }
 }
