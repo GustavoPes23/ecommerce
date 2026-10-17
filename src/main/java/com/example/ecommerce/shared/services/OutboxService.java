@@ -1,10 +1,12 @@
 package com.example.ecommerce.shared.services;
 
+import com.example.ecommerce.shared.domains.Event;
 import com.example.ecommerce.shared.domains.Outbox;
 import com.example.ecommerce.shared.domains.enums.OutboxEvents;
 import com.example.ecommerce.shared.domains.enums.OutboxStatus;
 import com.example.ecommerce.shared.gateways.OutboxGateway;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
@@ -17,20 +19,26 @@ public class OutboxService {
 
     private final ObjectMapper objectMapper;
     private final OutboxGateway outboxGateway;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public Outbox create(final Object payload, final OutboxEvents event) {
+    public Outbox create(final Event payload, final OutboxEvents event) {
         final Outbox outbox = Outbox.create(objectMapper.writeValueAsString(payload), event);
         return outboxGateway.save(outbox);
     }
 
+    public void send(final UUID outboxId, final Event event) {
+        /* TODO implements Kafka to send events */
+        publisher.publishEvent(event);
+        markAsSent(outboxId);
+    }
+
     @Transactional
-    public Outbox markAsSent(final UUID id) {
+    private void markAsSent(final UUID id) {
         final Outbox outbox = outboxGateway.findByIdAndStatus(id, OutboxStatus.PENDING)
                 .orElseThrow();
 
         outbox.markAsSent();
-
-        return outboxGateway.save(outbox);
+        outboxGateway.save(outbox);
     }
 }
