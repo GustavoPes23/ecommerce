@@ -3,7 +3,7 @@ package com.example.ecommerce.user.usecases;
 import com.example.ecommerce.user.domains.User;
 import com.example.ecommerce.user.domains.enums.UserStatus;
 import com.example.ecommerce.user.gateways.UserGateway;
-import com.example.ecommerce.user.publish.InactiveUserPublisher;
+import com.example.ecommerce.user.publishers.InactiveUserPublisher;
 import com.example.ecommerce.user.usecases.exceptions.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
