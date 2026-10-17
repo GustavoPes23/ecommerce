@@ -1,4 +1,4 @@
 package com.example.ecommerce.user.controllers.handler.dtos;
 
-public record HandleResponse(String code, String message) {
+public record UserHandleResponse(String code, String message) {
 }
